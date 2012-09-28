@@ -1,0 +1,59 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mainLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:scrollbars="horizontal|vertical" >
+
+    <ToggleButton
+        android:id="@+id/startStopButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_margin="10dp"
+        android:clickable="false"
+        android:enabled="false"
+        android:longClickable="false"
+        android:text="@string/zram_enabled"
+        android:textOff="zRAM swap OFF"
+        android:textOn="zRAM swap ON "
+        android:visibility="visible" />
+
+    <Button
+        android:id="@+id/getEnvButton"
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:layout_margin="10dp"
+        android:clickable="false"
+        android:enabled="false"
+        android:text="@string/zram_swapinfo"
+        android:visibility="visible" />
+
+    <HorizontalScrollView
+        android:id="@+id/horizontalScrollView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/startStopButton"
+        android:layout_margin="10dp" >
+
+        <TextView
+            android:id="@+id/stateInfo"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:enabled="true"
+            android:gravity="top|left"
+            android:overScrollMode="always"
+            android:scrollHorizontally="true"
+            android:scrollbars="horizontal|vertical"
+            android:text="@string/initial_stateinfo" />
+
+    </HorizontalScrollView>
+
+</RelativeLayout>

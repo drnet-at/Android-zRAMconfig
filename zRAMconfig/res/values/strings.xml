@@ -1,0 +1,12 @@
+<resources>
+
+    <string name="app_name">zRAMconfig</string>
+    <string name="preferences">Preferences</string>
+    <string name="title_activity_zramconfig">zRAMconfig</string>
+    <string name="about">About</string>
+    <string name="about_text">zRAMconfig &amp;#169; 2012 LeoP&lt;br&gt;&lt;br&gt;This utility helps manage zRAM settings on so enabled kernels.&lt;br&gt;&lt;br&gt;&lt;a href=&quot;http://findicons.com/icon/10885/zip?id=10983&quot;&gt;App icon&lt;/a&gt; is freeware.&lt;br&gt;&lt;br&gt;&lt;a href=&quot;http://code.google.com/p/roottools/&quot;&gt;RootTools&lt;/a&gt; are  Apache 2.0 and GPLv2licensed&lt;br&gt;&lt;br&gt;This program is licensed under the GNU &lt;a href=&quot;http://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html&quot;&gt;GPLv2&lt;/a&gt;</string>
+    <string name="initial_stateinfo">Initializing, please wait &#8230;</string>
+    <string name="zram_enabled">zRAM enabled</string>
+    <string name="zram_swapinfo">zRAM swap info</string>
+
+</resources>

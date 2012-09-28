@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+    <PreferenceCategory android:title="zRAM settings" >
+        <EditTextPreference
+            android:defaultValue="40%"
+            android:dialogTitle="zRAM size"
+            android:key="TotalSize"
+            android:maxLength="7"
+            android:summary="Total memory used for zRAM&#10;(1-70%, 10-2048M, 10240-999999K)"
+            android:title="zRAM size" />
+        <EditTextPreference
+            android:defaultValue="2"
+            android:dialogTitle="zRAM device count"
+            android:key="DeviceCount"
+            android:numeric="integer"
+            android:maxLength="1"
+            android:summary="Number of zRAM devices to create (1-8)"
+            android:title="zRAM device count" />
+        <EditTextPreference
+            android:defaultValue="80"
+            android:dialogTitle="Kernel swappiness (zRAM on)"
+            android:key="SwappinessOn"
+            android:numeric="integer"
+            android:maxLength="2"
+            android:summary="Aggressivity of zRAM swap use (10..99)"
+            android:title="Kernel swappiness with zRAM on" />
+        <EditTextPreference
+            android:defaultValue="40"
+            android:dialogTitle="Kernel swappiness (zRAM off)"
+            android:key="SwappinessOff"
+            android:numeric="integer"
+            android:maxLength="2"
+            android:summary="Aggressivity of other swap use (10..99)"
+            android:title="Kernel swappiness with zRAM off" />
+        </PreferenceCategory>
+    <PreferenceCategory android:title="App settings" >
+        <EditTextPreference
+            android:defaultValue="/data/local/bin/zram.sh"
+            android:dialogTitle="Path to zRAM script"
+            android:key="ScriptPath"
+            android:maxLength="250"
+            android:summary="Path to the zRAM control script"
+            android:title="zRAM script path" />
+        </PreferenceCategory>
+</PreferenceScreen>
