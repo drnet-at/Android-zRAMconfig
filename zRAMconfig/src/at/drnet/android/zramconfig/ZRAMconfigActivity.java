@@ -27,13 +27,19 @@ public class ZRAMconfigActivity extends Activity {
 
 	private ToggleButton startStopButton;
 	private Button getEnvButton;
+	private Button setDefaultsButton;
 	private TextView stateInfo;
 	private final int shellTimeout=60000;
 	private boolean prefsOK=true;
 	private final int reqCode=0x1717;
+	private boolean finishOnUserLeave=false;
 
 	//This just helps dev/debug on a non-rooted device, e.g. AVD emulator
 	private final boolean rootedDevice=true;
+	
+	public void onUserLeaveHint () {
+		if (finishOnUserLeave) finish();
+	}
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -86,7 +92,8 @@ public class ZRAMconfigActivity extends Activity {
             	((TextView)dlg.findViewById(android.R.id.message)).setMovementMethod(LinkMovementMethod.getInstance());
             	return true;
             case R.id.preferences:
-            	startActivity(new Intent(this, ZRAMconfigPreferencesActivity.class));
+            	finishOnUserLeave=false;
+            	startActivityForResult(new Intent(this, ZRAMconfigPreferencesActivity.class),reqCode);
     			return true;
         }
         return super.onOptionsItemSelected(item);
@@ -101,6 +108,8 @@ public class ZRAMconfigActivity extends Activity {
 	}
 	
     private void runMainPart() {
+        finishOnUserLeave=true;
+
         //Show "waiting for root" notification 
     	Toast toast=Toast.makeText(getApplicationContext(), "Waiting for root access, please wait", Toast.LENGTH_SHORT);
    		toast.show();
@@ -186,6 +195,15 @@ public class ZRAMconfigActivity extends Activity {
         		getEnvClicked();
         	}
         });
+
+        //Prepare set defaults button
+        setDefaultsButton=(Button)findViewById(R.id.setDefaultsButton);
+        setDefaultsButton.setOnClickListener(new OnClickListener() {
+        	@Override
+        	public void onClick(View v) {
+        		setDefaultsClicked();
+        	}
+        });
     }
     
     private String runCommand(String cmd, boolean asRoot) {
@@ -213,6 +231,8 @@ public class ZRAMconfigActivity extends Activity {
     	startStopButton.setClickable(false);
     	getEnvButton.setEnabled(false);
     	getEnvButton.setClickable(false);
+    	setDefaultsButton.setEnabled(false);
+    	setDefaultsButton.setClickable(false);
     }
     
     private void enableButtons() {
@@ -220,7 +240,10 @@ public class ZRAMconfigActivity extends Activity {
     	startStopButton.setClickable(true);
     	getEnvButton.setEnabled(true);
     	getEnvButton.setClickable(true);
+    	setDefaultsButton.setEnabled(true);
+    	setDefaultsButton.setClickable(true);
     }
+    
     
     private String[] getResultParams(String raw, String cmd, int paramCount) {
     	String[] result=new String[paramCount+2];
@@ -333,6 +356,20 @@ public class ZRAMconfigActivity extends Activity {
    		doGetEnv();
     }
     
+    private void setDefaultsClicked() {
+    	//Disable buttons
+    	disableButtons();
+    	
+    	//Handle the click; Show notification first
+    	Context ctx=getApplicationContext();
+   		Toast toast=Toast.makeText(ctx, "Trying to set zRAM autostart preferences", Toast.LENGTH_SHORT);
+   		toast.show();
+
+   		//Run the work on a background thread
+   		stateInfo.setText("Setting zRAM autostart preferences, please wait ...");
+   		doSetDefaults();
+    }
+    
     private void doStopZRAM() {
     	stateInfo.setText("Stopping zRAM, this can take up to a minute.\nPlease be patient!");
     	TimerTask tt=new TimerTask() {
@@ -416,8 +453,7 @@ public class ZRAMconfigActivity extends Activity {
     	Timer t=new Timer();
     	t.schedule(tt, 200);
     }
-    
-    
+        
     private void startZRAMdone(final String result) {
 		runOnUiThread(new Runnable() {
 			public void run() {
@@ -425,8 +461,7 @@ public class ZRAMconfigActivity extends Activity {
 			}
 		});
     }
-    
-    
+   
     private void startZRAMresult(String result) {
     	Toast toast;
     	String text="";
@@ -488,7 +523,6 @@ public class ZRAMconfigActivity extends Activity {
     	t.schedule(tt, 200);
     }
     
-    
     private void getEnvDone(final String result) {
 		runOnUiThread(new Runnable() {
 			public void run() {
@@ -496,7 +530,6 @@ public class ZRAMconfigActivity extends Activity {
 			}
 		});
     }
-    
     
     private void getEnvResult(String result) {
     	Toast toast;
@@ -546,6 +579,58 @@ public class ZRAMconfigActivity extends Activity {
     			toast=Toast.makeText(getApplicationContext(), "Error reading zRAM swap state: "+parsed[10], Toast.LENGTH_SHORT);
     			toast.show();
     			text="Error reading zRAM swap state:\n"+parsed[10];
+    		}
+    		
+    		text+="\n\n\n==========================================\nRaw message exchange:\n"+result+"\n==========================================";
+    		stateInfo.setText((CharSequence)text);
+    	}
+    	enableButtons();
+    }
+
+    private void doSetDefaults() {
+    	stateInfo.setText("Setting zRAM autostart preferences, this can take some seconds.\nPlease be patient!");
+    	TimerTask tt=new TimerTask() {
+    		public void run() {
+    			//Give display a chance to update
+    			try { Thread.sleep(200); }
+				catch (InterruptedException e) { }
+    			
+    			//Off we go ...
+    			SharedPreferences prefs=PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+    			String cmd=prefs.getString("ScriptPath", "");
+    			cmd+=" setdefaults";
+    			String res=runCommand(cmd, rootedDevice);
+    			if (res!=null) res="##"+cmd+"\n"+res.trim();
+    			setDefaultsDone(res);
+    		}
+    	};
+    	Timer t=new Timer();
+    	t.schedule(tt, 200);
+    }
+    
+    private void setDefaultsDone(final String result) {
+		runOnUiThread(new Runnable() {
+			public void run() {
+				setDefaultsResult(result);
+			}
+		});
+    }
+    
+    private void setDefaultsResult(String result) {
+    	Toast toast;
+    	String text="";
+    	if (result==null) {
+    		stateInfo.setText("Error setting zRAM autostart preferences");
+        	toast=Toast.makeText(getApplicationContext(), "Error setting zRAM autostart preferences", Toast.LENGTH_SHORT);
+       		toast.show();
+    	} else {
+    		String[] parsed=getResultParams(result, "SETDEFAULTS", 0);
+    		if (parsed[1].toUpperCase().equals("SUCCESS")) {
+    			text="Successfully set zRAM autostart preferences to current state";
+    		} else {
+    			toast=Toast.makeText(getApplicationContext(), "Error setting zRAM autostart preferences: "+parsed[1], Toast.LENGTH_SHORT);
+    			toast.show();
+    			text="Error setting zRAM autostart preferences:\n"+parsed[1];
     		}
     		
     		text+="\n\n\n==========================================\nRaw message exchange:\n"+result+"\n==========================================";

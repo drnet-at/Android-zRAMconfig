@@ -8,5 +8,6 @@
     <string name="initial_stateinfo">Initializing, please wait &#8230;</string>
     <string name="zram_enabled">zRAM enabled</string>
     <string name="zram_swapinfo">zRAM swap info</string>
-
+    <string name="zram_setdefaults">Set on startup</string>
+    
 </resources>

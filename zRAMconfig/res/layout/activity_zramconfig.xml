@@ -5,6 +5,19 @@
     android:layout_height="match_parent"
     android:scrollbars="horizontal|vertical" >
 
+    <Button
+        android:id="@+id/setDefaultsButton"
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="10dp"
+        android:clickable="false"
+        android:enabled="false"
+        android:text="@string/zram_setdefaults"
+        android:visibility="visible" />
+    
     <ToggleButton
         android:id="@+id/startStopButton"
         android:layout_width="wrap_content"
@@ -15,6 +28,7 @@
         android:clickable="false"
         android:enabled="false"
         android:longClickable="false"
+        android:minWidth="48dip"
         android:text="@string/zram_enabled"
         android:textOff="zRAM swap OFF"
         android:textOn="zRAM swap ON "
